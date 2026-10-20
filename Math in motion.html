@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Math in motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F6FA;--pn:#fff;--ink:#1B2340;--mu:#5B6483;--ln:#CBD1E4;--gr:#E7EAF4;--a:#6C5CE7;--b:#0FA37F;--c:#E8960A;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12162A;--pn:#1A2040;--ink:#ECEFFA;--mu:#9AA3C7;--ln:#363F72;--gr:#232A50;--a:#9A8DFF;--b:#2CC9A0;--c:#FFC247}}
+:root[data-theme="dark"]{--bg:#12162A;--pn:#1A2040;--ink:#ECEFFA;--mu:#9AA3C7;--ln:#363F72;--gr:#232A50;--a:#9A8DFF;--b:#2CC9A0;--c:#FFC247}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:22px 16px 40px}
+h1{font:700 30px/1.1 'Bricolage Grotesque',system-ui,sans-serif;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mu);margin:0 0 18px;font-size:15px}
+button,select,input{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--ln);border-radius:8px}
+button{padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--mu)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+select,input[type=text]{padding:6px 8px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.tabs .on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 12px;min-height:40px}
+.err{color:#C0392B;font-size:13px}
+.stage{background:var(--pn);background-image:linear-gradient(var(--gr) 1px,transparent 1px),linear-gradient(90deg,var(--gr) 1px,transparent 1px);background-size:24px 24px;border:1px solid var(--ln);border-radius:10px;padding:18px;min-height:250px}
+.bar{position:relative;height:44px;border:1px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--pn)}
+.bar>div{position:absolute;top:0;bottom:0}
+.fl{transition:width .9s ease}
+.fi{width:1px;background:var(--ink)}
+.cs{width:2px;background:var(--ink);opacity:.8}
+.row{margin:0 0 12px}
+.lab{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px;margin:0 0 6px;min-height:40px}
+.hint{color:var(--mu);font-size:13px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;line-height:1.2;vertical-align:middle;margin:0 4px;font-weight:600}
+.fr span:first-child{border-bottom:1.5px solid currentColor;padding:0 6px 2px}
+.fr span:last-child{padding-top:2px}
+.eq{font-size:22px;text-align:center;margin:16px 0 6px;min-height:56px}
+.cap{color:var(--mu);text-align:center;margin:0 auto;max-width:560px;min-height:48px;font-size:15px}
+.bar-actions{display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0 0}
+.prog{color:var(--mu);font-size:13px;margin-left:8px}
+.cols{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.col{text-align:center}
+.cn{font-size:13px;color:var(--mu);margin-bottom:4px}
+.tw{height:var(--S0);display:flex;align-items:flex-end;justify-content:center}
+.gh{border:1px dashed var(--ln);box-sizing:border-box}
+.sq{width:100%;height:100%;background:var(--k);transform:scale(0);transform-origin:bottom;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.un{font-size:12px;color:var(--mu);margin:6px 0 2px}
+.dg{font:700 32px/1.2 'Bricolage Grotesque',system-ui,sans-serif;color:var(--k);opacity:0;transition:opacity .5s}
+.cv{font-weight:600;font-size:14px;color:var(--k);opacity:0;transition:opacity .5s}
+.in .sq{transform:none}.in .dg,.in .cv{opacity:1}
+.dp{height:var(--S0);margin-top:23px;display:flex;align-items:flex-end;font:700 46px/.8 'Bricolage Grotesque',system-ui,sans-serif;color:var(--ink)}
+.grid{display:flex;flex-direction:column;gap:7px;align-items:center}
+.r{display:flex;gap:7px;opacity:0;transform:scale(.92);transition:.45s}
+.r.in{opacity:1;transform:none}
+.dot{width:var(--s);height:var(--s);border-radius:50%;background:var(--a)}
+.r.new .dot{background:var(--c)}
+.mf{display:flex;flex-direction:column;align-items:center;gap:14px}
+.lg{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;min-height:44px;font-size:14px;color:var(--mu)}
+.lg>span{opacity:0;transition:opacity .5s}.lg>span.on{opacity:1}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.sqm{position:relative;border:2px solid var(--ink);background:var(--pn);overflow:hidden;border-radius:4px}
+.sqm>div{position:absolute}.sqm>.ls{inset:0}
+.mfa{left:0;top:0;height:100%;background:var(--a);opacity:0;transition:opacity .6s}
+.mfb{left:0;top:0;width:100%;background:var(--b);opacity:0;transition:opacity .6s}
+.mfo{left:0;top:0;background:var(--c);opacity:0;transition:opacity .6s}
+.vl,.hl{position:absolute;background:var(--ink);opacity:0;transition:opacity .6s}
+.vl{top:0;bottom:0;width:1px}.hl{left:0;right:0;height:1px}
+.stk{display:grid}.stk>div{grid-area:1/1}
+#bs{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-content:center;transition:opacity .6s}
+#tks{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:center}
+.bw{width:120px}.bl{font-size:13px;color:var(--mu);text-align:center;margin-top:6px;min-height:20px}
+.cell{transition:box-shadow .5s}.cut .cell,.pb .cell{box-shadow:inset -2px 0 0 var(--pn)}.cell.e{box-shadow:inset -1px 0 0 var(--ln)}
+.tk{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--bg);opacity:0;transition:opacity .4s}
+.g10{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;margin:10px auto 0}
+.gc{aspect-ratio:1;border:1px solid var(--ln);border-radius:2px;background:var(--pn);transition:background .35s,opacity .35s}
+@keyframes f{from{opacity:0}to{opacity:.3}}
+.fi.an{opacity:.3;animation:f .5s}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head>
+<body><div class="wrap">
+<h1>Math in motion</h1>
+<p class="sub">Pick a topic, then press Play or step through it.</p>
+<div class="tabs" id="tabs"></div>
+<div class="ctl" id="ctl"></div>
+<div class="stage" id="stage"></div>
+<div class="eq" id="eq"></div>
+<p class="cap" id="cap"></p>
+<div class="bar-actions"><button id="play">Play</button><button id="next">Next step</button><button id="reset">Reset</button><span class="prog" id="prog"></span></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a*b/gcd(a,b);
+const fr=(n,d,c)=>`<span class="fr" style="color:${c||'var(--ink)'}"><span>${n}</span><span>${d}</span></span>`;
+const opts=(a,b,v)=>{let h='';for(let i=a;i<=b;i++)h+=`<option${i==v?' selected':''}>${i}</option>`;return h};
+const CA='var(--a)',CB='var(--b)',CC='var(--c)';
+let cur='add',stage=0,MX=0,timer=null,ST={},lastDec='3.472';
+function mkLines(bar,per,total,cls){const o=[];for(let i=1;i<total*per;i++){const e=document.createElement('div');e.className=cls;e.style.left=(i/(total*per)*100)+'%';if(cls==='cs'&&i%per===0)e.style.width='3px';bar.appendChild(e);o.push(e)}return o}
+function mkFill(bar,l,w,col,id){const f=document.createElement('div');f.className='fl';f.style.cssText=`left:${l}%;width:${w}%;background:${col}`;if(id)f.id=id;bar.appendChild(f);return f}
+
+const M={
+add:{name:'Add fractions',
+ctl:`<span><select id="n1"></select> / <select id="d1"></select></span> <b>+</b> <span><select id="n2"></select> / <select id="d2"></select></span>`,
+init(){$('d1').innerHTML=opts(2,8,4);$('d2').innerHTML=opts(2,8,3);$('n1').innerHTML=opts(1,7,1);$('n2').innerHTML=opts(1,7,1)},
+setup(){
+ const d1=+$('d1').value,d2=+$('d2').value,n1=Math.min(+$('n1').value,d1-1),n2=Math.min(+$('n2').value,d2-1);
+ $('n1').value=n1;$('n2').value=n2;
+ const L=lcm(d1,d2),m1=L/d1,m2=L/d2,sn=n1*m1+n2*m2,T=Math.max(1,Math.ceil(sn/L-1e-9)),pc=x=>x/T*100;
+ ST={n1,d1,n2,d2,L,m1,m2,sn,T,g:gcd(sn,L),pc};MX=2;
+ $('stage').innerHTML=`<div class="row"><div class="lab" id="lA"></div><div class="bar" id="bA"></div></div><div class="row"><div class="lab" id="lB"></div><div class="bar" id="bB"></div></div><div class="row" id="rC" style="opacity:0;transition:opacity .6s"><div class="lab" id="lC"></div><div class="bar" id="bC"></div></div>`;
+ mkFill($('bA'),0,pc(n1/d1),CA);mkFill($('bB'),0,pc(n2/d2),CB);
+ mkFill($('bC'),0,pc(n1/d1),CA);mkFill($('bC'),pc(n1/d1),0,CB,'c2');
+ ST.fine=[...mkLines($('bA'),L,T,'fi'),...mkLines($('bB'),L,T,'fi')];
+ ST.fine.forEach(e=>e.style.opacity=0);
+ mkLines($('bA'),d1,T,'cs');mkLines($('bB'),d2,T,'cs');
+ mkLines($('bC'),L,T,'fi').forEach(e=>e.style.opacity=.3);mkLines($('bC'),1,T,'cs');
+},
+draw(s){
+ const {n1,d1,n2,d2,L,m1,m2,sn,g,pc}=ST;
+ ST.fine.forEach(e=>e.style.opacity=s>=1?.3:0);
+ $('rC').style.opacity=s>=2?1:0;$('c2').style.width=s>=2?pc(n2/d2)+'%':'0%';
+ const h=t=>`<span class="hint">${t}</span>`;
+ $('lA').innerHTML=s<1?`${fr(n1,d1,CA)}${h('cut into '+d1+' equal parts')}`:`${fr(n1,d1,CA)} = ${fr(n1*m1,L,CA)}${h('multiply top and bottom by '+m1)}`;
+ $('lB').innerHTML=s<1?`${fr(n2,d2,CB)}${h('cut into '+d2+' equal parts')}`:`${fr(n2,d2,CB)} = ${fr(n2*m2,L,CB)}${h('multiply top and bottom by '+m2)}`;
+ $('lC').innerHTML=`${h('Same-size pieces, so count them:')}${fr(n1*m1,L,CA)} + ${fr(n2*m2,L,CB)} = ${fr(sn,L)}`;
+ let e;
+ if(s===0)e=`${fr(n1,d1,CA)} + ${fr(n2,d2,CB)} = ?`;
+ else if(s===1)e=`${fr(n1*m1,L,CA)} + ${fr(n2*m2,L,CB)} = ?`;
+ else{e=`${fr(n1*m1,L,CA)} + ${fr(n2*m2,L,CB)} = ${fr(sn,L)}`;if(g>1)e+=` = ${fr(sn/g,L/g)}`;else if(sn>L)e+=` = ${Math.floor(sn/L)}${sn%L?' '+fr(sn%L,L):''}`}
+ $('eq').innerHTML=e;
+ $('cap').textContent=[`The pieces are different sizes (${d1}ths and ${d2}ths), so we can’t just add the tops.`,`Cut both bars into ${L}ths, a common denominator. Same amounts, but now the pieces match.`,`Every piece is the same size. Add the tops (${n1*m1} + ${n2*m2} = ${sn}) and keep the denominator ${L}.${g>1?' Then simplify.':''}`][s];
+}},
+
+dec:{name:'Decimal place value',
+ctl:`<label>Number <input type="text" id="num" value="3.472" maxlength="5" size="6" inputmode="decimal"></label><span class="err" id="err"></span>`,
+init(){},
+setup(){
+ const v=$('num').value.trim(),ok=/^\d{1,3}(\.\d{1,3})?$/.test(v)&&v.replace('.','').length<=4;
+ $('err').textContent=ok?'':'Use up to 4 digits in total, like 3.472 or 12.05, so the smallest square stays visible.';
+ if(ok)lastDec=v;const s=lastDec,[ip,fp='']=s.split('.');
+ const nm=p=>p>=0?['ones','tens','hundreds'][p]:['tenths','hundredths','thousandths'][-p-1];
+ const val=(d,p)=>d===0?'0':p>=0?String(d*10**p):(d/10**-p).toFixed(-p);
+ const cols=[...ip.split('').map((d,i)=>({d:+d,p:ip.length-1-i})),...fp.split('').map((d,i)=>({d:+d,p:-(i+1)}))].map(c=>({...c,n:nm(c.p),v:val(c.d,c.p)}));
+ ST={cols,s};MX=cols.length;
+ const S0=110;let h=`<div class="cols" style="--S0:${S0}px">`;
+ cols.forEach((c,i)=>{
+  const z=S0*Math.pow(10,-i/2);c.u=val(1,c.p);
+  if(c.p===-1)h+='<div class="dp">.</div>';
+  h+=`<div class="col" id="col${i}" style="--k:${c.p>=0?'var(--a)':'var(--b)'};width:${Math.max(84,Math.ceil(z))}px"><div class="cn">${c.n}</div><div class="tw"><div class="gh" style="width:${z}px;height:${z}px"><div class="sq"></div></div></div><div class="un">1 square = ${c.u}</div><div class="dg">× ${c.d}</div><div class="cv">${c.v}</div></div>`});
+ $('stage').innerHTML=h+'</div>';
+},
+draw(s){
+ const {cols,s:num}=ST;
+ cols.forEach((c,i)=>$('col'+i).classList.toggle('in',i<s));
+ const parts=cols.slice(0,s).filter(c=>c.d>0).map(c=>c.v);
+ $('eq').innerHTML=s===0?`<span style="font-weight:600">${num}</span>`:s<cols.length?`${parts.join(' + ')||'0'} + …`:`${parts.join(' + ')||'0'} = <b>${num}</b>`;
+ if(s===0)$('cap').textContent='Each square has 1/10 the area of the square to its left, just as each place is worth 1/10 of the place before it. Step through to fill them in.';
+ else{const c=cols[s-1];$('cap').textContent=`${c.d} ${c.n} square${c.d===1?'':'s'}: ${c.d} × ${c.u} = ${c.v}.${s===cols.length?' Add them all to rebuild the number.':''}`}
+}},
+
+eq:{name:'Equivalent fractions',
+ctl:`<span><select id="en"></select> / <select id="ed"></select></span><label>Pieces per part <input type="range" id="k" min="1" max="6" value="1"></label>`,
+init(){$('ed').innerHTML=opts(2,8,3);$('en').innerHTML=opts(1,7,2);$('k').oninput=e=>{stopPlay();stage=+e.target.value-1;render()}},
+setup(){
+ const d=+$('ed').value,n=Math.min(+$('en').value,d-1);$('en').value=n;ST={n,d};MX=5;
+ $('stage').innerHTML=`<div class="row"><div class="lab" id="lE"></div><div class="bar" id="bE"></div></div>`;
+ mkFill($('bE'),0,n/d*100,CA);mkLines($('bE'),d,1,'cs');
+},
+draw(s){
+ const {n,d}=ST,k=s+1;$('k').value=k;
+ $('bE').querySelectorAll('.fi').forEach(e=>e.remove());
+ if(k>1)mkLines($('bE'),d*k,1,'fi').forEach(e=>e.classList.add('an'));
+ $('lE').innerHTML=`${fr(n,d,CA)} = ${fr(n*k,d*k,CA)}<span class="hint">${k===1?'start here':'multiply top and bottom by '+k}</span>`;
+ $('eq').innerHTML=`${fr(n,d)} × ${fr(k,k)} = ${fr(n*k,d*k)}`;
+ $('cap').textContent=k===1?`The bar is cut into ${d} equal parts and ${n} are shaded.`:`Cut every part into ${k} smaller pieces. Now ${n*k} of ${d*k} pieces are shaded, and the shaded amount hasn’t changed.`;
+}},
+
+mul:{name:'Multiplication',
+ctl:`<select id="ma"></select> <b>rows of</b> <select id="mb"></select>`,
+init(){$('ma').innerHTML=opts(1,12,3);$('mb').innerHTML=opts(1,12,4)},
+setup(){
+ const a=+$('ma').value,b=+$('mb').value;ST={a,b};MX=a;
+ const sz=Math.max(12,Math.min(28,Math.floor(Math.min(innerWidth-80,620)/b)-7));
+ $('stage').innerHTML=`<div class="grid" style="--s:${sz}px">${Array.from({length:a},(_,i)=>`<div class="r" id="r${i}">${'<span class="dot"></span>'.repeat(b)}</div>`).join('')}</div>`;
+},
+draw(s){
+ const {a,b}=ST;
+ for(let i=0;i<a;i++){const r=$('r'+i);r.classList.toggle('in',i<s);r.classList.toggle('new',i===s-1)}
+ $('eq').innerHTML=s===0?`${a} × ${b} = ?`:`${Array(s).fill(b).join(' + ')} = <b>${s*b}</b>${s===a?` &nbsp;so&nbsp; ${a} × ${b} = ${a*b}`:''}`;
+ $('cap').textContent=s===0?'Multiplication is repeated addition: equal rows, added up.':`${s} row${s>1?'s':''} of ${b} makes ${s*b}.${s===a?' That’s what '+a+' × '+b+' means.':''}`;
+}},
+
+mf:{name:'Multiply fractions',
+ctl:`<span><select id='fa'></select> / <select id='fb'></select></span> <b>×</b> <span><select id='fc'></select> / <select id='fd'></select></span>`,
+init(){$('fb').innerHTML=opts(2,8,3);$('fd').innerHTML=opts(2,8,4);$('fa').innerHTML=opts(1,7,2);$('fc').innerHTML=opts(1,7,3)},
+setup(){
+ const b=+$('fb').value,d=+$('fd').value,a=Math.min(+$('fa').value,b-1),c=Math.min(+$('fc').value,d-1);
+ $('fa').value=a;$('fc').value=c;MX=3;ST={a,b,c,d,g:gcd(a*c,b*d)};
+ const z=Math.max(180,Math.min(280,innerWidth-90)),el=(k,css)=>`<div class='${k}' style='${css}'></div>`;
+ let v='',h='';
+ for(let i=1;i<b;i++)v+=el('vl',`left:${i/b*100}%`);
+ for(let i=1;i<d;i++)h+=el('hl',`top:${i/d*100}%`);
+ const sw=col=>`<i class='sw' style='background:${col}'></i>`;
+ $('stage').innerHTML=`<div class='mf'><div class='lg'><span id='l1'>${sw(CA)}${fr(a,b,CA)} of the width</span><span id='l2'>${sw(CB)}${fr(c,d,CB)} of the height</span><span id='l3'>${sw(CC)}${fr(a*c,b*d)} of the square</span></div><div class='sqm' style='width:${z}px;height:${z}px'>${el('mfa',`width:${a/b*100}%`)}${el('mfb',`height:${c/d*100}%`)}${el('mfo',`width:${a/b*100}%;height:${c/d*100}%`)}<div class='ls'>${v}</div><div class='ls'>${h}</div></div></div>`;
+},
+draw(s){
+ const {a,b,c,d,g}=ST,ac=a*c,bd=b*d,q=(k,o)=>document.querySelectorAll(k).forEach(e=>e.style.opacity=o);
+ q('.mfa',s>=1?.6:0);q('.mfb',s>=2?.6:0);q('.mfo',s>=3?.95:0);q('.vl',s>=1?.45:0);q('.hl',s>=2?.45:0);
+ [1,2,3].forEach(i=>$('l'+i).classList.toggle('on',s>=i));
+ let e=`${fr(a,b,CA)} × ${fr(c,d,CB)} = `;
+ if(s<3)e+='?';else{e+=`${fr(a+'×'+c,b+'×'+d)} = ${fr(ac,bd)}`;if(g>1)e+=` = ${fr(ac/g,bd/g)}`}
+ $('eq').innerHTML=e;
+ $('cap').textContent=[`Multiplying fractions means finding a fraction of a fraction. Start with a whole square worth 1.`,`Cut the square into ${b} equal columns and shade ${a} of them: ${a}/${b} of the width.`,`Now cut it into ${d} equal rows and shade ${c} of them. The overlap is ${a}/${b} of ${c}/${d}.`,`The square is now ${bd} equal cells, and ${ac} of them are in the overlap. Multiply the tops (${a} × ${c} = ${ac}) and the bottoms (${b} × ${d} = ${bd}).${g>1?' Then simplify.':''}`][s];
+}},
+
+dv:{name:'Divide fractions',
+ctl:`<span><select id='va'></select> / <select id='vb'></select></span> <b>÷</b> <span><select id='vc'></select> / <select id='vd'></select></span>`,
+init(){$('vb').innerHTML=opts(2,8,4);$('vd').innerHTML=opts(2,8,2);$('va').innerHTML=opts(1,7,3);$('vc').innerHTML=opts(1,7,1)},
+setup(){
+ const b=+$('vb').value,d=+$('vd').value,a=Math.min(+$('va').value,b-1),c=Math.min(+$('vc').value,d-1);
+ $('va').value=a;$('vc').value=c;
+ const L=lcm(b,d),A=a*L/b,C=c*L/d,q=Math.floor(A/C),r=A%C;
+ ST={a,b,c,d,L,A,C,q,r,g:gcd(A,C)};MX=3;
+ $('stage').innerHTML=`<div class='row'><div class='lab' id='lA'></div><div class='bar' id='bA'></div></div><div class='row'><div class='lab' id='lB'></div><div class='bar' id='bB'></div></div><div class='row' id='rC' style='opacity:0;transition:opacity .6s'><div class='lab' id='lC'></div><div class='bar' id='bC'></div></div>`;
+ mkFill($('bA'),0,a/b*100,CA);mkFill($('bB'),0,c/d*100,CB);
+ ST.fine=[...mkLines($('bA'),L,1,'fi'),...mkLines($('bB'),L,1,'fi')];ST.fine.forEach(e=>e.style.opacity=0);
+ mkLines($('bA'),b,1,'cs');mkLines($('bB'),d,1,'cs');
+ ST.grp=[];
+ for(let k=0;k*C<A;k++){const n=Math.min(C,A-k*C),f=mkFill($('bC'),k*C/L*100,n/L*100,n===C?CB:CC);f.style.cssText+=`;opacity:0;box-shadow:inset 0 0 0 2px var(--pn);display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:600;font-size:14px;transition:opacity .5s ${k*.35}s`;f.textContent=n===C?k+1:`${n}/${C}`;ST.grp.push(f)}
+ mkLines($('bC'),L,1,'fi').forEach(e=>e.style.opacity=.3);
+},
+draw(s){
+ const {a,b,c,d,L,A,C,q,r,g}=ST,h=t=>`<span class='hint'>${t}</span>`,fa=A/g,fc=C/g;
+ ST.fine.forEach(e=>e.style.opacity=s>=1?.3:0);
+ $('rC').style.opacity=s>=2?1:0;ST.grp.forEach(f=>f.style.opacity=s>=2?.92:0);
+ $('lA').innerHTML=s<1?`${fr(a,b,CA)}${h('what we have (the dividend)')}`:`${fr(a,b,CA)} = ${fr(A,L,CA)}${h('multiply top and bottom by '+L/b)}`;
+ $('lB').innerHTML=s<1?`${fr(c,d,CB)}${h('size of one group (the divisor)')}`:`${fr(c,d,CB)} = ${fr(C,L,CB)}${h('multiply top and bottom by '+L/d)}`;
+ $('lC').innerHTML=h(`Groups of ${C} piece${C>1?'s':''} out of ${A}`);
+ let e=`${fr(a,b,CA)} ÷ ${fr(c,d,CB)} = `;
+ if(s<1)e+='?';
+ else if(s<3)e+=`${fr(A,L,CA)} ÷ ${fr(C,L,CB)} = ?`;
+ else{const res=fc===1?`${fa}`:A>C?`${fr(fa,fc)} = ${q} ${fr(r/g,fc)}`:fr(fa,fc);e+=`${fr(A,L,CA)} ÷ ${fr(C,L,CB)} = ${A} ÷ ${C} = ${res}`}
+ $('eq').innerHTML=e;
+ $('cap').textContent=[`How many ${c}/${d}s fit into ${a}/${b}? Division asks how many groups of the second fraction fit inside the first.`,`Cut both into ${L}ths so the pieces match: ${a}/${b} = ${A}/${L} and ${c}/${d} = ${C}/${L}.`,`Make groups of ${C} piece${C>1?'s':''} from the ${A} pieces. ${q>0?`${q} full group${q===1?'':'s'}`:'No full groups'}${r?`${q>0?' and a leftover that is':', just'} ${r}/${C} of a group`:''}.`,`So ${a}/${b} ÷ ${c}/${d} = ${A} ÷ ${C}. Shortcut: dividing by ${c}/${d} is the same as multiplying by its flip, ${d}/${c}.`][s];
+}},
+
+mx:{name:'Mixed ↔ improper',
+ctl:`<select id='xm'><option value='mi'>Mixed → improper</option><option value='im'>Improper → mixed</option></select> <select id='xw'></select> <span><select id='xn'></select> / <select id='xd'></select></span>`,
+init(){$('xw').innerHTML=opts(1,5,2);$('xd').innerHTML=opts(2,8,4);$('xn').innerHTML=opts(1,7,3)},
+setup(){
+ const w=+$('xw').value,d=+$('xd').value,n=Math.min(+$('xn').value,d-1),mi=$('xm').value==='mi',N=w*d+n;
+ $('xn').value=n;ST={w,d,n,N,mi};MX=3;
+ let bars='',tk='';
+ for(let k=0;k<=w;k++){const full=k<w;bars+=`<div class='bw'><div class='bar${full?'':' pb'}'>${Array.from({length:d},(_,j)=>{const f=full||j<n;return `<div class='cell${f?'':' e'}' style='left:${j/d*100}%;width:${100/d}%;${f?`background:${full?'var(--a)':'var(--b)'}`:''}'></div>`}).join('')}</div><div class='bl'></div></div>`}
+ for(let i=0;i<N;i++)tk+=`<span class='tk' style='background:${mi?(i<w*d?'var(--a)':'var(--b)'):'var(--c)'}'>${i+1}</span>`;
+ $('stage').innerHTML=`<div class='stk'><div id='bs'>${bars}</div><div id='tks'>${tk}</div></div>`;
+},
+draw(s){
+ const {w,d,n,N,mi}=ST,bs=$('bs'),barsOn=mi?s<2:s>=1,tokOn=mi?s>=2:s===0;
+ bs.style.opacity=barsOn?1:0;bs.classList.toggle('cut',mi?s>=1:true);
+ document.querySelectorAll('#tks .tk').forEach((t,i)=>{t.style.transitionDelay=tokOn?`${i*.07}s`:'0s';t.style.opacity=tokOn?1:0});
+ [...bs.children].forEach((b,k)=>{const full=k<w;b.querySelector('.bl').textContent=mi?(s>=1?(full?`${d} pieces`:`${n} piece${n>1?'s':''}`):''):(s>=2?(full?'1 whole':`${n}/${d}`):'')});
+ const parts=mi?[`${w} ${fr(n,d)}`,fr(`(${w} × ${d}) + ${n}`,d),fr(`${w*d} + ${n}`,d),fr(N,d)]:[fr(N,d),`${N} ÷ ${d}`,`${w} remainder ${n}`,`${w} ${fr(n,d)}`];
+ $('eq').innerHTML=parts.slice(0,s+1).join(' = ')+(s<3?' = ?':'');
+ const wh=w===1?'whole':'wholes';
+ $('cap').textContent=(mi?[`${w} ${n}/${d} is ${w} ${wh} plus ${n}/${d}.`,`Cut every whole into ${d}ths. Each whole is ${d} pieces, so ${w} ${wh} is ${w} × ${d} = ${w*d} pieces.`,`Add the ${n} extra piece${n>1?'s':''} and count them all: ${w*d} + ${n} = ${N} pieces, each worth 1/${d}.`,`${N} pieces of size 1/${d} make ${N}/${d}. Rule: whole × denominator + numerator, over the same denominator.`]:[`${N}/${d} means ${N} pieces, each worth 1/${d}.`,`Every ${d} pieces make one whole. Group them: ${w} full group${w>1?'s':''} of ${d}, with ${n} left over.`,`${N} ÷ ${d} = ${w} remainder ${n}. The quotient is the whole number, and the remainder goes on top of the denominator.`,`${N}/${d} = ${w} ${n}/${d}.`])[s];
+}},
+
+fd:{name:'Fraction ↔ decimal',last:.75,
+ctl:`<select id='gm'><option value='fd'>Fraction → decimal</option><option value='df'>Decimal → fraction</option></select> <span id='gf'><select id='ga'></select> / <select id='gb'></select></span> <span id='gx'><input type='text' id='gd' value='0.75' size='5' maxlength='4' inputmode='decimal'></span><span class='err' id='ge'></span>`,
+init(){$('gb').innerHTML=[2,4,5,10,20,25,50].map(v=>`<option${v==4?' selected':''}>${v}</option>`).join('');$('ga').innerHTML=opts(1,3,3)},
+setup(){
+ const mode=$('gm').value,b=+$('gb').value,a=Math.min(+$('ga').value||1,b-1);
+ $('ga').innerHTML=opts(1,b-1,a);
+ $('gf').style.display=mode==='fd'?'':'none';$('gx').style.display=mode==='fd'?'none':'';
+ let k;
+ if(mode==='fd')k=a*100/b;
+ else{const t=$('gd').value.trim(),ok=/^0?\.\d{1,2}$/.test(t)&&+t>0&&+t<1;$('ge').textContent=ok?'':'Enter a decimal between 0 and 1 with up to 2 places, like 0.35.';if(ok)M.fd.last=+t;k=Math.round(M.fd.last*100)}
+ ST={mode,k,a,b,g:gcd(k,100),full:Math.floor(k/10),rem:k%10,dec:k%10===0?(k/100).toFixed(1):(k/100).toFixed(2)};MX=3;
+ const z=Math.max(180,Math.min(280,innerWidth-90));
+ $('stage').innerHTML=`<div class='hint' style='text-align:center'>Whole grid = 1 · each row = 0.1 · each square = 0.01</div><div class='g10' style='width:${z}px'>${'<div class="gc"></div>'.repeat(100)}</div>`;
+},
+draw(s){
+ const {mode,k,a,b,g,full,rem,dec}=ST,fd=mode==='fd',sa=k/g,sb=100/g;
+ document.querySelectorAll('.gc').forEach((c,i)=>{
+  let col=null,op=1;
+  if(i<k){
+   if(fd){if(s>=3)col=i<full*10?CB:CC;else if(s>=1)col=CA}
+   else if(s===0)col=i<full*10?CB:CC;
+   else{col=CA;if(s>=2&&Math.floor(i/g)%2)op=.6}
+  }else if(!fd&&s>=2&&Math.floor(i/g)%2){col='var(--ln)';op=.5}
+  c.style.background=col||'var(--pn)';c.style.opacity=op;
+  c.style.transitionDelay=(fd&&s===1&&col)?`${i*.015}s`:'0s';
+ });
+ const pv=[full?`${full} full row${full>1?'s':''} = ${full} tenth${full>1?'s':''}`:'',rem?`${rem} extra square${rem>1?'s':''} = ${rem} hundredth${rem>1?'s':''}`:''].filter(Boolean).join(' and ');
+ let e,cap;
+ if(fd){
+  e=fr(a,b,CA)+(s>=2?` = ${fr(k,100,CA)}`:'')+(s>=3?` = <b>${dec}</b>`:' = ?');
+  cap=[`The grid has 100 squares and is worth 1 whole, so each square is 1/100 = 0.01 and each row of 10 is 1/10 = 0.1.`,`Shade ${a}/${b} of the grid. One ${b}th is ${100/b} squares, so ${a} × ${100/b} = ${k} squares.`,`${k} of the 100 squares are shaded, so ${a}/${b} = ${k}/100. (Multiply top and bottom by ${100/b}.)`,`Read it as place value: ${pv}. So ${a}/${b} = ${dec}.`][s];
+ }else{
+  e=`<b>${dec}</b>`+(s>=1?` = ${fr(k,100,CA)}`:'')+(s>=2&&g>1?` = ${fr(`${k} ÷ ${g}`,`100 ÷ ${g}`)}`:'')+(s>=3&&g>1?` = ${fr(sa,sb,CA)}`:'')+(s<3?' = ?':'');
+  cap=[`${dec} on the grid: ${pv}.`,`Every square is 1/100, so count them all: ${k} squares out of 100. That makes ${dec} = ${k}/100.`,g>1?`Group the squares into equal groups of ${g}. There are ${sb} groups in all and ${sa} are shaded, so divide top and bottom by ${g}.`:`No bigger equal groups fit both numbers, so ${k}/100 is already as simple as it gets.`,g>1?`${dec} = ${k}/100 = ${sa}/${sb}.`:`${dec} = ${k}/100.`][s];
+ }
+ $('eq').innerHTML=e;$('cap').textContent=cap;
+}}
+};
+
+function render(){M[cur].draw(stage);$('prog').textContent=`Step ${stage+1} of ${MX+1}`}
+function stopPlay(){clearInterval(timer);timer=null;$('play').textContent='Play'}
+function load(k){
+ stopPlay();cur=k;stage=0;
+ document.querySelectorAll('#tabs button').forEach(b=>{const on=b.dataset.k===k;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
+ $('ctl').innerHTML=M[k].ctl;M[k].init();M[k].setup();render();
+}
+$('tabs').innerHTML=Object.keys(M).map(k=>`<button data-k="${k}">${M[k].name}</button>`).join('');
+$('tabs').onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(k)load(k)};
+$('ctl').addEventListener('change',e=>{if(e.target.type==='range')return;stopPlay();stage=0;M[cur].setup();render()});
+$('next').onclick=()=>{stopPlay();stage=stage>=MX?0:stage+1;render()};
+$('reset').onclick=()=>{stopPlay();stage=0;render()};
+$('play').onclick=()=>{
+ if(timer){stopPlay();return}
+ if(stage>=MX){stage=0;render()}
+ $('play').textContent='Pause';
+ timer=setInterval(()=>{stage++;render();if(stage>=MX)stopPlay()},1700);
+};
+load('add');
+</script></body></html>
