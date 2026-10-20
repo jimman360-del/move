@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Math in motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F6FA;--pn:#fff;--ink:#1B2340;--mu:#5B6483;--ln:#CBD1E4;--gr:#E7EAF4;--a:#6C5CE7;--b:#0FA37F;--c:#E8960A;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12162A;--pn:#1A2040;--ink:#ECEFFA;--mu:#9AA3C7;--ln:#363F72;--gr:#232A50;--a:#9A8DFF;--b:#2CC9A0;--c:#FFC247}}
+:root[data-theme="dark"]{--bg:#12162A;--pn:#1A2040;--ink:#ECEFFA;--mu:#9AA3C7;--ln:#363F72;--gr:#232A50;--a:#9A8DFF;--b:#2CC9A0;--c:#FFC247}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:22px 16px 40px}
+h1{font:700 30px/1.1 'Bricolage Grotesque',system-ui,sans-serif;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mu);margin:0 0 18px;font-size:15px}
+button,select,input{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--ln);border-radius:8px}
+button{padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--mu)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+select,input[type=text]{padding:6px 8px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.tabs .on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 12px;min-height:40px}
+.err{color:#C0392B;font-size:13px}
+.stage{background:var(--pn);background-image:linear-gradient(var(--gr) 1px,transparent 1px),linear-gradient(90deg,var(--gr) 1px,transparent 1px);background-size:24px 24px;border:1px solid var(--ln);border-radius:10px;padding:18px;min-height:250px}
+.bar{position:relative;height:44px;border:1px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--pn)}
+.bar>div{position:absolute;top:0;bottom:0}
+.fl{transition:width .9s ease}
+.fi{width:1px;background:var(--ink)}
+.cs{width:2px;background:var(--ink);opacity:.8}
+.row{margin:0 0 12px}
+.lab{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px;margin:0 0 6px;min-height:40px}
+.hint{color:var(--mu);font-size:13px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;line-height:1.2;vertical-align:middle;margin:0 4px;font-weight:600}
+.fr span:first-child{border-bottom:1.5px solid currentColor;padding:0 6px 2px}
+.fr span:last-child{padding-top:2px}
+.eq{font-size:22px;text-align:center;margin:16px 0 6px;min-height:56px}
+.cap{color:var(--mu);text-align:center;margin:0 auto;max-width:560px;min-height:48px;font-size:15px}
+.bar-actions{display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0 0}
+.prog{color:var(--mu);font-size:13px;margin-left:8px}
+.cols{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.col{text-align:center}
+.cn{font-size:13px;color:var(--mu);margin-bottom:4px}
+.tw{height:var(--S0);display:flex;align-items:flex-end;justify-content:center}
+.gh{border:1px dashed var(--ln);box-sizing:border-box}
+.sq{width:100%;height:100%;background:var(--k);transform:scale(0);transform-origin:bottom;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.un{font-size:12px;color:var(--mu);margin:6px 0 2px}
+.dg{font:700 32px/1.2 'Bricolage Grotesque',system-ui,sans-serif;color:var(--k);opacity:0;transition:opacity .5s}
+.cv{font-weight:600;font-size:14px;color:var(--k);opacity:0;transition:opacity .5s}
+.in .sq{transform:none}.in .dg,.in .cv{opacity:1}
+.dp{height:var(--S0);margin-top:23px;display:flex;align-items:flex-end;font:700 46px/.8 'Bricolage Grotesque',system-ui,sans-serif;color:var(--ink)}
+.grid{display:flex;flex-direction:column;gap:7px;align-items:center}
+.r{display:flex;gap:7px;opacity:0;transform:scale(.92);transition:.45s}
+.r.in{opacity:1;transform:none}
+.dot{width:var(--s);height:var(--s);border-radius:50%;background:var(--a)}
+.r.new .dot{background:var(--c)}
+@keyframes f{from{opacity:0}to{opacity:.3}}
+.fi.an{opacity:.3;animation:f .5s}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head>
+<body><div class="wrap">
+<h1>Math in motion</h1>
+<p class="sub">Pick a topic, then press Play or step through it.</p>
+<div class="tabs" id="tabs"></div>
+<div class="ctl" id="ctl"></div>
+<div class="stage" id="stage"></div>
+<div class="eq" id="eq"></div>
+<p class="cap" id="cap"></p>
+<div class="bar-actions"><button id="play">Play</button><button id="next">Next step</button><button id="reset">Reset</button><span class="prog" id="prog"></span></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a*b/gcd(a,b);
+const fr=(n,d,c)=>`<span class="fr" style="color:${c||'var(--ink)'}"><span>${n}</span><span>${d}</span></span>`;
+const opts=(a,b,v)=>{let h='';for(let i=a;i<=b;i++)h+=`<option${i==v?' selected':''}>${i}</option>`;return h};
+const CA='var(--a)',CB='var(--b)',CC='var(--c)';
+let cur='add',stage=0,MX=0,timer=null,ST={},lastDec='3.472';
+function mkLines(bar,per,total,cls){const o=[];for(let i=1;i<total*per;i++){const e=document.createElement('div');e.className=cls;e.style.left=(i/(total*per)*100)+'%';if(cls==='cs'&&i%per===0)e.style.width='3px';bar.appendChild(e);o.push(e)}return o}
+function mkFill(bar,l,w,col,id){const f=document.createElement('div');f.className='fl';f.style.cssText=`left:${l}%;width:${w}%;background:${col}`;if(id)f.id=id;bar.appendChild(f);return f}
+
+const M={
+add:{name:'Add fractions',
+ctl:`<span><select id="n1"></select> / <select id="d1"></select></span> <b>+</b> <span><select id="n2"></select> / <select id="d2"></select></span>`,
+init(){$('d1').innerHTML=opts(2,8,4);$('d2').innerHTML=opts(2,8,3);$('n1').innerHTML=opts(1,7,1);$('n2').innerHTML=opts(1,7,1)},
+setup(){
+ const d1=+$('d1').value,d2=+$('d2').value,n1=Math.min(+$('n1').value,d1-1),n2=Math.min(+$('n2').value,d2-1);
+ $('n1').value=n1;$('n2').value=n2;
+ const L=lcm(d1,d2),m1=L/d1,m2=L/d2,sn=n1*m1+n2*m2,T=Math.max(1,Math.ceil(sn/L-1e-9)),pc=x=>x/T*100;
+ ST={n1,d1,n2,d2,L,m1,m2,sn,T,g:gcd(sn,L),pc};MX=2;
+ $('stage').innerHTML=`<div class="row"><div class="lab" id="lA"></div><div class="bar" id="bA"></div></div><div class="row"><div class="lab" id="lB"></div><div class="bar" id="bB"></div></div><div class="row" id="rC" style="opacity:0;transition:opacity .6s"><div class="lab" id="lC"></div><div class="bar" id="bC"></div></div>`;
+ mkFill($('bA'),0,pc(n1/d1),CA);mkFill($('bB'),0,pc(n2/d2),CB);
+ mkFill($('bC'),0,pc(n1/d1),CA);mkFill($('bC'),pc(n1/d1),0,CB,'c2');
+ ST.fine=[...mkLines($('bA'),L,T,'fi'),...mkLines($('bB'),L,T,'fi')];
+ ST.fine.forEach(e=>e.style.opacity=0);
+ mkLines($('bA'),d1,T,'cs');mkLines($('bB'),d2,T,'cs');
+ mkLines($('bC'),L,T,'fi').forEach(e=>e.style.opacity=.3);mkLines($('bC'),1,T,'cs');
+},
+draw(s){
+ const {n1,d1,n2,d2,L,m1,m2,sn,g,pc}=ST;
+ ST.fine.forEach(e=>e.style.opacity=s>=1?.3:0);
+ $('rC').style.opacity=s>=2?1:0;$('c2').style.width=s>=2?pc(n2/d2)+'%':'0%';
+ const h=t=>`<span class="hint">${t}</span>`;
+ $('lA').innerHTML=s<1?`${fr(n1,d1,CA)}${h('cut into '+d1+' equal parts')}`:`${fr(n1,d1,CA)} = ${fr(n1*m1,L,CA)}${h('multiply top and bottom by '+m1)}`;
+ $('lB').innerHTML=s<1?`${fr(n2,d2,CB)}${h('cut into '+d2+' equal parts')}`:`${fr(n2,d2,CB)} = ${fr(n2*m2,L,CB)}${h('multiply top and bottom by '+m2)}`;
+ $('lC').innerHTML=`${h('Same-size pieces, so count them:')}${fr(n1*m1,L,CA)} + ${fr(n2*m2,L,CB)} = ${fr(sn,L)}`;
+ let e;
+ if(s===0)e=`${fr(n1,d1,CA)} + ${fr(n2,d2,CB)} = ?`;
+ else if(s===1)e=`${fr(n1*m1,L,CA)} + ${fr(n2*m2,L,CB)} = ?`;
+ else{e=`${fr(n1*m1,L,CA)} + ${fr(n2*m2,L,CB)} = ${fr(sn,L)}`;if(g>1)e+=` = ${fr(sn/g,L/g)}`;else if(sn>L)e+=` = ${Math.floor(sn/L)}${sn%L?' '+fr(sn%L,L):''}`}
+ $('eq').innerHTML=e;
+ $('cap').textContent=[`The pieces are different sizes (${d1}ths and ${d2}ths), so we can’t just add the tops.`,`Cut both bars into ${L}ths, a common denominator. Same amounts, but now the pieces match.`,`Every piece is the same size. Add the tops (${n1*m1} + ${n2*m2} = ${sn}) and keep the denominator ${L}.${g>1?' Then simplify.':''}`][s];
+}},
+
+dec:{name:'Decimal place value',
+ctl:`<label>Number <input type="text" id="num" value="3.472" maxlength="5" size="6" inputmode="decimal"></label><span class="err" id="err"></span>`,
+init(){},
+setup(){
+ const v=$('num').value.trim(),ok=/^\d{1,3}(\.\d{1,3})?$/.test(v)&&v.replace('.','').length<=4;
+ $('err').textContent=ok?'':'Use up to 4 digits in total, like 3.472 or 12.05, so the smallest square stays visible.';
+ if(ok)lastDec=v;const s=lastDec,[ip,fp='']=s.split('.');
+ const nm=p=>p>=0?['ones','tens','hundreds'][p]:['tenths','hundredths','thousandths'][-p-1];
+ const val=(d,p)=>d===0?'0':p>=0?String(d*10**p):(d/10**-p).toFixed(-p);
+ const cols=[...ip.split('').map((d,i)=>({d:+d,p:ip.length-1-i})),...fp.split('').map((d,i)=>({d:+d,p:-(i+1)}))].map(c=>({...c,n:nm(c.p),v:val(c.d,c.p)}));
+ ST={cols,s};MX=cols.length;
+ const S0=110;let h=`<div class="cols" style="--S0:${S0}px">`;
+ cols.forEach((c,i)=>{
+  const z=S0*Math.pow(10,-i/2);c.u=val(1,c.p);
+  if(c.p===-1)h+='<div class="dp">.</div>';
+  h+=`<div class="col" id="col${i}" style="--k:${c.p>=0?'var(--a)':'var(--b)'};width:${Math.max(84,Math.ceil(z))}px"><div class="cn">${c.n}</div><div class="tw"><div class="gh" style="width:${z}px;height:${z}px"><div class="sq"></div></div></div><div class="un">1 square = ${c.u}</div><div class="dg">× ${c.d}</div><div class="cv">${c.v}</div></div>`});
+ $('stage').innerHTML=h+'</div>';
+},
+draw(s){
+ const {cols,s:num}=ST;
+ cols.forEach((c,i)=>$('col'+i).classList.toggle('in',i<s));
+ const parts=cols.slice(0,s).filter(c=>c.d>0).map(c=>c.v);
+ $('eq').innerHTML=s===0?`<span style="font-weight:600">${num}</span>`:s<cols.length?`${parts.join(' + ')||'0'} + …`:`${parts.join(' + ')||'0'} = <b>${num}</b>`;
+ if(s===0)$('cap').textContent='Each square has 1/10 the area of the square to its left, just as each place is worth 1/10 of the place before it. Step through to fill them in.';
+ else{const c=cols[s-1];$('cap').textContent=`${c.d} ${c.n} square${c.d===1?'':'s'}: ${c.d} × ${c.u} = ${c.v}.${s===cols.length?' Add them all to rebuild the number.':''}`}
+}},
+
+eq:{name:'Equivalent fractions',
+ctl:`<span><select id="en"></select> / <select id="ed"></select></span><label>Pieces per part <input type="range" id="k" min="1" max="6" value="1"></label>`,
+init(){$('ed').innerHTML=opts(2,8,3);$('en').innerHTML=opts(1,7,2);$('k').oninput=e=>{stopPlay();stage=+e.target.value-1;render()}},
+setup(){
+ const d=+$('ed').value,n=Math.min(+$('en').value,d-1);$('en').value=n;ST={n,d};MX=5;
+ $('stage').innerHTML=`<div class="row"><div class="lab" id="lE"></div><div class="bar" id="bE"></div></div>`;
+ mkFill($('bE'),0,n/d*100,CA);mkLines($('bE'),d,1,'cs');
+},
+draw(s){
+ const {n,d}=ST,k=s+1;$('k').value=k;
+ $('bE').querySelectorAll('.fi').forEach(e=>e.remove());
+ if(k>1)mkLines($('bE'),d*k,1,'fi').forEach(e=>e.classList.add('an'));
+ $('lE').innerHTML=`${fr(n,d,CA)} = ${fr(n*k,d*k,CA)}<span class="hint">${k===1?'start here':'multiply top and bottom by '+k}</span>`;
+ $('eq').innerHTML=`${fr(n,d)} × ${fr(k,k)} = ${fr(n*k,d*k)}`;
+ $('cap').textContent=k===1?`The bar is cut into ${d} equal parts and ${n} are shaded.`:`Cut every part into ${k} smaller pieces. Now ${n*k} of ${d*k} pieces are shaded, and the shaded amount hasn’t changed.`;
+}},
+
+mul:{name:'Multiplication',
+ctl:`<select id="ma"></select> <b>rows of</b> <select id="mb"></select>`,
+init(){$('ma').innerHTML=opts(1,12,3);$('mb').innerHTML=opts(1,12,4)},
+setup(){
+ const a=+$('ma').value,b=+$('mb').value;ST={a,b};MX=a;
+ const sz=Math.max(12,Math.min(28,Math.floor(Math.min(innerWidth-80,620)/b)-7));
+ $('stage').innerHTML=`<div class="grid" style="--s:${sz}px">${Array.from({length:a},(_,i)=>`<div class="r" id="r${i}">${'<span class="dot"></span>'.repeat(b)}</div>`).join('')}</div>`;
+},
+draw(s){
+ const {a,b}=ST;
+ for(let i=0;i<a;i++){const r=$('r'+i);r.classList.toggle('in',i<s);r.classList.toggle('new',i===s-1)}
+ $('eq').innerHTML=s===0?`${a} × ${b} = ?`:`${Array(s).fill(b).join(' + ')} = <b>${s*b}</b>${s===a?` &nbsp;so&nbsp; ${a} × ${b} = ${a*b}`:''}`;
+ $('cap').textContent=s===0?'Multiplication is repeated addition: equal rows, added up.':`${s} row${s>1?'s':''} of ${b} makes ${s*b}.${s===a?' That’s what '+a+' × '+b+' means.':''}`;
+}}
+};
+
+function render(){M[cur].draw(stage);$('prog').textContent=`Step ${stage+1} of ${MX+1}`}
+function stopPlay(){clearInterval(timer);timer=null;$('play').textContent='Play'}
+function load(k){
+ stopPlay();cur=k;stage=0;
+ document.querySelectorAll('#tabs button').forEach(b=>{const on=b.dataset.k===k;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
+ $('ctl').innerHTML=M[k].ctl;M[k].init();M[k].setup();render();
+}
+$('tabs').innerHTML=Object.keys(M).map(k=>`<button data-k="${k}">${M[k].name}</button>`).join('');
+$('tabs').onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(k)load(k)};
+$('ctl').addEventListener('change',e=>{if(e.target.type==='range')return;stopPlay();stage=0;M[cur].setup();render()});
+$('next').onclick=()=>{stopPlay();stage=stage>=MX?0:stage+1;render()};
+$('reset').onclick=()=>{stopPlay();stage=0;render()};
+$('play').onclick=()=>{
+ if(timer){stopPlay();return}
+ if(stage>=MX){stage=0;render()}
+ $('play').textContent='Pause';
+ timer=setInterval(()=>{stage++;render();if(stage>=MX)stopPlay()},1700);
+};
+load('add');
+</script></body></html>
