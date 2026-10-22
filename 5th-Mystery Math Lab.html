@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mystery Math Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eaf4ff;--card:#fff;--ink:#1b2a4a;--mut:#4f5f80;--yel:#ffc93c;--mint:#7be0d0;--pink:#ff8fab;--line:#c3d5ee;--ok:#0e7a64;--bad:#b82a56;--btn:#1b2a4a;--btnt:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a31;--card:#1a2744;--ink:#eef3ff;--mut:#a3b3d3;--line:#2f4169;--ok:#6fe6c9;--bad:#ff9db6;--btn:#ffc93c;--btnt:#1b2a4a}}
+:root[data-theme="dark"]{--bg:#0f1a31;--card:#1a2744;--ink:#eef3ff;--mut:#a3b3d3;--line:#2f4169;--ok:#6fe6c9;--bad:#ff9db6;--btn:#ffc93c;--btnt:#1b2a4a}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Fredoka","Trebuchet MS",system-ui,sans-serif;font-size:18px;line-height:1.45;padding:16px}
+.wrap{max-width:720px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+h1{font-size:clamp(26px,6vw,38px);margin:0;font-weight:700;letter-spacing:-.01em}
+#stars{background:var(--yel);color:#1b2a4a;font-weight:700;padding:6px 14px;border-radius:999px;white-space:nowrap}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{font:inherit;font-weight:600;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:9px 16px;border-radius:14px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#stage{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:22px}
+button:focus-visible,input:focus-visible{outline:3px solid #3b82f6;outline-offset:2px}
+.intro{margin:0 0 4px;color:var(--mut)}
+.lv{font-weight:600;font-size:15px;color:var(--mut);margin-bottom:14px}
+.prompt{font-size:22px;font-weight:600;margin:14px 0}
+.tbl{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.cell{flex:1 1 78px;border:2px solid var(--line);border-radius:14px;text-align:center;overflow:hidden}
+.cell small{display:block;background:var(--line);color:var(--ink);font-weight:600;padding:2px}
+.cell b{display:block;font-size:26px;padding:6px}
+.cell.q b{background:var(--yel);color:#1b2a4a}
+.eqn{font-size:34px;font-weight:700;text-align:center;margin:6px 0}
+svg{width:100%;height:auto;display:block}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+input[type=number]{font:inherit;font-size:26px;font-weight:600;width:130px;padding:8px 12px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.btn{font:inherit;font-weight:600;border:0;border-radius:14px;padding:11px 20px;cursor:pointer;background:var(--btn);color:var(--btnt)}
+.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.opt{font:inherit;font-size:22px;font-weight:600;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 20px;cursor:pointer}
+.opt:disabled{opacity:.6;cursor:default}
+.ctl span{font-weight:600}
+#amt{width:84px;font-size:20px;padding:6px 10px}
+#sc{touch-action:none;user-select:none;-webkit-user-select:none}
+.mv{transition:transform .9s cubic-bezier(.34,1.56,.64,1)}
+#bm{transform-origin:300px 56px}#pl{transform-origin:150px 56px}#pr{transform-origin:450px 56px}
+.unit{cursor:grab}.unit:hover rect{stroke-width:3.5}.unit:active{cursor:grabbing}.mbox{cursor:not-allowed}
+.tip{margin:6px 0 10px;color:var(--mut);font-size:16px}
+button.cell{font:inherit;color:inherit;background:var(--card);cursor:pointer;padding:0}
+button.cell:hover{border-color:var(--ink)}
+.mchn{position:relative;height:140px;background:var(--bg);border-radius:18px;overflow:hidden;margin:8px 0}
+.mc-bub{position:absolute;top:43px;left:8px;width:54px;height:54px;border-radius:50%;background:#ffc93c;color:#1b2a4a;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;z-index:1}
+.mc-bub.out{left:auto;right:8px;background:#7be0d0}
+.mc-box{position:absolute;z-index:2;left:50%;top:10px;width:136px;height:120px;margin-left:-68px;background:var(--ink);color:var(--bg);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.mc-op{height:22px;font-weight:600;font-size:17px}
+.mc-disp{background:#ffc93c;color:#1b2a4a;font-weight:700;font-size:26px;min-width:84px;text-align:center;border-radius:10px;padding:0 10px}
+.gear{display:inline-block;font-size:30px;margin:0 4px;line-height:1.1}
+.mc-box.run{animation:shake .2s infinite}
+.mc-box.run .gear{animation:spin .9s linear infinite}.mc-box.run .g2{animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{0%,100%{transform:translate(0)}25%{transform:translate(-2px,1px)}75%{transform:translate(2px,-1px)}}
+@media (prefers-reduced-motion:reduce){.mc-box.run,.mc-box.run .gear{animation:none}}
+.mlt{margin:6px 0}
+.rv{opacity:0;transition:opacity .6s ease}
+.rv.on{opacity:1}
+.rc{transform-box:fill-box;transform-origin:center;transform:scale(.6);transition:opacity .6s ease,transform .7s cubic-bezier(.34,1.5,.5,1)}
+.rc.on{transform:none}
+.rc.cur rect{stroke:var(--ink);stroke-width:4}
+.cap{min-height:56px;font-size:19px;font-weight:500;margin:8px 0}
+@media (prefers-reduced-motion:reduce){.rv,.rc{transition:none}}
+.lv{margin-bottom:8px}
+.lvp{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.lvb{font:inherit;font-weight:700;width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.lvb[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fadeout{opacity:0}
+.anim .trm{opacity:0;animation:fin .4s forwards}
+.anim .new{animation:popin .5s both;transform-box:fill-box;transform-origin:50% 100%}
+.anim .fadeout{opacity:1;animation:fo .9s both}
+@keyframes fin{to{opacity:1}}
+@keyframes popin{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+@keyframes fo{from{opacity:1}to{opacity:0}}
+@media (prefers-reduced-motion:reduce){.anim .trm,.anim .new,.anim .fadeout{animation-duration:.01s}}
+@media (prefers-reduced-motion:reduce){.mv{transition:none}}
+#fb{min-height:30px;margin-top:14px;font-weight:500}
+#fb.ok{color:var(--ok)}#fb.no{color:var(--bad)}#fb.info{color:var(--mut)}
+@media (prefers-reduced-motion:no-preference){.pop{animation:pop .3s}@keyframes pop{from{transform:scale(.97)}to{transform:none}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>Mystery Math Lab</h1><div id="stars" aria-live="polite">★ 0</div></header>
+<nav id="tabs">
+<button class="tab" data-a="machine">Function Machine</button>
+<button class="tab" data-a="balance">Balance Scale</button>
+<button class="tab" data-a="pattern">Pattern Detective</button>
+<button class="tab" data-a="multiply">Multiply Lab</button>
+</nav>
+<main id="stage"></main>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const S={act:'machine',stars:0,prog:{machine:0,balance:0,pattern:0,multiply:0},steps:[],i:0,tries:0,done:false,first:true};
+try{const s=JSON.parse(localStorage.getItem('mml')||'null');if(s){S.stars=s.stars|0;Object.assign(S.prog,s.prog)}}catch(e){}
+const save=()=>{try{localStorage.setItem('mml',JSON.stringify({stars:S.stars,prog:S.prog}))}catch(e){}};
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuf=a=>a.slice().sort(()=>Math.random()-.5);
+const LMAX={machine:9,balance:6,pattern:3,multiply:3};
+const lvl=()=>Math.min(LMAX[S.act],1+Math.floor(S.prog[S.act]/3));
+const rt=r=>(r.a==1?'n':'n × '+r.a)+(r.b?' + '+r.b:'');
+const val=(r,n)=>r.a*n+r.b;
+const INTRO={
+ multiply:'Big multiplication gets easy when you break numbers into tens and ones. Watch the pieces, then try it yourself.',
+ machine:'A machine changes every number the same way. Crack its secret rule! The letter n means “any number that goes in.”',
+ balance:'The scale starts perfectly balanced. The letter x is the secret number in every yellow box. Try taking some away and watch what happens, then find x!',
+ pattern:'Patterns follow a rule. Watch the blocks grow or shrink. Some patterns add, some subtract, some multiply, and some use the terms before them. Spot the rule, then jump ahead.'};
+
+function cells(pairs,top,bot,qIdx){return '<div class="tbl">'+pairs.map((p,i)=>`<div class="cell${i===qIdx?' q':''}"><small>${top} ${p[0]}</small><b>${p[1]}</b></div>`).join('')+'</div>'}
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let MTOK=0;
+async function mplay(n,out,stages){
+ const my=++MTOK,bi=$('#bi'),bo=$('#bo'),mb=$('#mcb'),md=$('#md'),mop=$('#mop');
+ if(!bi)return;
+ const live=()=>my===MTOK&&document.body.contains(bi);
+ const an=(el,k,o)=>el.animate(k,Object.assign({fill:'forwards'},o)).finished.catch(()=>{});
+ [bi,bo].forEach(el=>{el.getAnimations().forEach(x=>x.cancel());el.style.opacity=0});
+ mb.classList.remove('run');bi.textContent=n;bo.textContent=out;md.textContent='?';mop.textContent='';
+ const m=mb.getBoundingClientRect(),r1=bi.getBoundingClientRect(),r2=bo.getBoundingClientRect(),mc=m.left+m.width/2;
+ const sIn=mc-(r1.left+r1.width/2),sOut=mc-(r2.left+r2.width/2);
+ await an(bi,[{opacity:0,transform:'scale(.4)'},{opacity:1,transform:'scale(1)'}],{duration:250});
+ await sleep(200);if(!live())return;
+ await an(bi,[{opacity:1,transform:'translateX(0) scale(1)'},{opacity:1,transform:`translateX(${sIn}px) scale(.7)`}],{duration:750,easing:'ease-in'});
+ if(!live())return;
+ bi.style.opacity=0;bi.getAnimations().forEach(x=>x.cancel());
+ mb.classList.add('run');
+ if(stages){
+  md.textContent=n;await sleep(600);
+  for(const [op,v] of stages){if(!live())return;mop.textContent=op;await sleep(600);md.textContent=v;await sleep(800)}
+  mop.textContent='';
+ }else{
+  for(let i=0;i<9;i++){if(!live())return;md.textContent=R(10,99);await sleep(110)}
+  md.textContent='?';
+ }
+ if(!live())return;
+ mb.classList.remove('run');
+ await an(bo,[{opacity:1,transform:`translateX(${sOut}px) scale(.5)`},{opacity:1,transform:'translateX(0) scale(1)'}],{duration:800,easing:'cubic-bezier(.2,.8,.3,1.25)'});
+}
+
+const LN=['Add','Subtract','Multiply','Divide','Times, then add','Times, then subtract','Divide, then add','Divide, then subtract','Mixed two-step'];
+const mval=(r,n)=>n*r.a/r.d+r.b;
+const mrt=r=>(r.d>1?'n ÷ '+r.d:r.a>1?'n × '+r.a:'n')+(r.b>0?' + '+r.b:r.b<0?' − '+(-r.b):'');
+function genMachine(){
+ const L=lvl(),rng=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+ let r,pool,tf;
+ if(L==1){r={a:1,d:1,b:R(2,9)};pool=rng(1,8);tf=()=>R(9,15)}
+ else if(L==2){r={a:1,d:1,b:-R(2,9)};pool=rng(10,17);tf=()=>R(18,30)}
+ else if(L==3){r={a:R(2,6),d:1,b:0};pool=rng(1,8);tf=()=>R(9,15)}
+ else if(L==4){const d=R(2,5);r={a:1,d,b:0};pool=rng(2,8).map(m=>m*d);tf=()=>d*R(9,12)}
+ else if(L==5){r={a:R(2,4),d:1,b:R(1,5)};pool=rng(1,8);tf=()=>R(9,15)}
+ else{const k=L==9?R(5,8):L;
+  if(k==5){r={a:R(2,4),d:1,b:R(1,5)};pool=rng(1,8);tf=()=>R(9,15)}
+  else if(k==6){r={a:R(2,5),d:1,b:-R(1,5)};pool=rng(3,10);tf=()=>R(11,15)}
+ else if(k==7){const d=R(2,4);r={a:1,d,b:R(1,5)};pool=rng(2,8).map(m=>m*d);tf=()=>d*R(9,12)}
+ else{const d=R(2,4);r={a:1,d,b:-R(1,4)};pool=rng(6,12).map(m=>m*d);tf=()=>d*R(13,15)}}
+ const ex=shuf(pool).slice(0,3).sort((x,y)=>x-y),t=tf(),known=ex.map(n=>[n,mval(r,n)]),out=mval(r,t);
+ const cs=[{...r,b:r.b+1},{...r,b:r.b-1},{...r,b:r.b+2},{...r,b:-r.b},{...r,a:r.a+1}];
+ if(r.d==1&&r.a>1)cs.push({...r,a:r.a-1});
+ if(r.d>1){cs.push({...r,d:r.d+1});if(r.d>2)cs.push({...r,d:r.d-1})}
+ const seen=new Set([mrt(r)]);
+ const wrong=shuf(cs).filter(c=>{const tx=mrt(c);if(seen.has(tx)||(c.a==1&&c.d==1&&c.b==0))return false;if(ex.every(n=>mval(c,n)===mval(r,n)))return false;seen.add(tx);return true}).slice(0,2);
+ const opts=shuf([r,...wrong]).map(mrt);
+ const stagesFor=n=>{const s=[];let c=n;if(r.d>1){c=c/r.d;s.push(['÷ '+r.d,c])}if(r.a>1){c=c*r.a;s.push(['× '+r.a,c])}if(r.b){c+=r.b;s.push([(r.b>0?'+ ':'− ')+Math.abs(r.b),c])}return s};
+ const shell=withTest=>`<div class="mchn" id="mchn"><div class="mc-bub" id="bi"></div><div class="mc-box" id="mcb"><div><span class="gear">⚙︎</span><span class="gear g2">⚙︎</span></div><div class="mc-op" id="mop"></div><div class="mc-disp" id="md">?</div></div><div class="mc-bub out" id="bo"></div></div>
+ <p class="tip">Press a row to watch the machine work on that number.</p>
+ <div class="tbl">${known.map(p=>`<button class="cell" data-do="play" data-n="${p[0]}"><small>in ${p[0]}</small><b>out ${p[1]}</b></button>`).join('')}</div>
+ ${withTest?`<div class="tbl"><div class="cell q"><small>in ${t}</small><b>out ?</b></div></div>`:''}
+ <div class="row ctl"><span>Try your own number (0 to 99):</span><input id="own" type="number" min="0" max="99" aria-label="Your own number"><button class="btn alt" data-do="run">Run machine</button></div>`;
+ const runOwn=lock=>()=>{
+  const v=$('#own').value.trim(),n=Number(v);
+  if(v===''||!Number.isInteger(n)||n<0||n>99)return say('Pick a whole number from 0 to 99.','info');
+  if(lock&&!S.done&&n===t)return say('Save that one for the question! Pick a different number.','info');
+  if(r.d>1&&n%r.d)return say(`This machine divides by ${r.d}, so try a number from the ${r.d} times table, like ${r.d*6}.`,'info');
+  if(mval(r,n)<0)return say('Try a bigger number so the answer isn’t negative.','info');
+  say('','info');mplay(n,mval(r,n));
+ };
+ const playN=n=>mplay(n,mval(r,n));
+ return[{
+  vis:()=>shell(true),mount:()=>mplay(known[0][0],known[0][1]),playN,runOwn:runOwn(true),
+  onDone:()=>mplay(t,out),
+  prompt:`What comes out when ${t} goes in?`,mode:'num',answer:out,
+  hint:()=>`Look at the first row. What did the machine do to turn ${known[0][0]} into ${known[0][1]}? Do the same to ${t}.`,
+  explain:`The rule is ${mrt(r)}, so ${t} becomes ${out}.`},
+ {vis:()=>shell(false),mount:()=>mplay(known[1][0],known[1][1]),playN,runOwn:runOwn(false),
+  onDone:()=>mplay(t,out,stagesFor(t)),
+  prompt:'Which rule works for every row?',mode:'choice',opts,answer:mrt(r),
+  hint:()=>'Try a rule on one row. If it gives the wrong output, cross it off.',
+  explain:`${mrt(r)} fits: put in ${known[0][0]} and out comes ${known[0][1]}.`,final:true}];
+}
+
+const BN=['One-step add','One-step multiply','Two-step','Boxes on both sides','Boxes and blocks on both sides','Mixed'];
+const LNA={machine:LN,balance:BN};
+function genBalance(){
+ const L=lvl(),k=L==6?R(1,5):L;
+ let a=1,b=0,c=0,x=R(2,6);
+ if(k==1){c=R(2,9);x=R(2,9)}
+ else if(k==2)a=R(2,4);
+ else if(k==3){a=R(2,4);c=R(1,6)}
+ else{b=R(1,2);a=b+R(1,2);if(k==5)c=R(1,6)}
+ const st={a,c,b,d:(a-b)*x+c,amt:1,remL:0,remR:0,remBL:0,remBR:0};
+ const diff=()=>(st.a-st.b)*x+st.c-st.d;
+ const tilt=df=>{const t=-Math.sign(df)*Math.min(12,5+Math.abs(df)*1.5);$('#bm').style.transform=`rotate(${t}deg)`;$('#pl').style.transform=$('#pr').style.transform=`rotate(${-t}deg)`};
+ const blk=(px,py,w,fill,txt,cls,side)=>`<g class="${cls}" data-side="${side}"><rect x="${px}" y="${py}" width="${w}" height="${w}" rx="${w>30?10:5}" fill="${fill}" stroke="rgba(27,42,74,.4)" stroke-width="1.5"/>${txt?`<text x="${px+w/2}" y="${py+30}" text-anchor="middle" font-size="24" font-weight="700" fill="#1b2a4a" pointer-events="none">${txt}</text>`:''}</g>`;
+ const pan=(cx,n,m,sd,fill)=>{
+  const tot=n*50-6,cols=n>0?(m>10?10:5):10,baseY=n>0?120:164,w=Math.min(m,cols)*25-3;let s='';
+  for(let i=0;i<n;i++)s+=blk(cx-tot/2+i*50,146,44,'#ffc93c','x','mbox',sd);
+  for(let i=0;i<m;i++)s+=blk(cx-w/2+(i%cols)*25,baseY-Math.floor(i/cols)*25,22,fill,'','unit',sd);
+  return s};
+ const side=(n,m)=>{const p=[];if(n>0)p.push((n>1?n:'')+'x');if(m>0)p.push(m);return p.join(' + ')||'0'};
+ const tipMsg=()=>diff()==0?'Balanced again! You took the same amount off both sides, so nothing changed.':'Uh-oh! The scale tips. The '+(diff()>0?'left':'right')+' side is heavier now. Take the same amount off the other side to fix it.';
+ const update=()=>{
+  const df=diff();
+  $('#iL').innerHTML=pan(150,st.a,st.c,'L','#ff8fab');$('#iR').innerHTML=pan(450,st.b,st.d,'R','#7be0d0');
+  $('#eqn').textContent=side(st.a,st.c)+(df?' ≠ ':' = ')+side(st.b,st.d);
+  tilt(df);
+  $('#undo').style.display=(st.remL||st.remR||st.remBL||st.remBR)?'':'none';
+  ['bL','bR'].forEach(id=>$('#'+id).style.display=st.b>0?'':'none');
+ };
+ const tip=k>=4?'Drag blocks or mystery boxes off the scale. Watch what happens to the balance!':'Drag a pink or green block off the scale to take it away. Yellow boxes are mysteries, so they stay put.';
+ const vis=()=>`<div class="eqn" id="eqn"></div>
+ <svg id="sc" viewBox="0 0 600 300" role="img" aria-label="Balance scale. Drag blocks off the scale to take them away.">
+ <path d="M300 60 L250 288 H350 Z" fill="var(--line)"/>
+ <g id="bm" class="mv"><rect x="60" y="50" width="480" height="12" rx="6" fill="var(--ink)"/>
+  <g id="pl" class="mv"><path d="M150 56 L25 188 M150 56 L275 188" stroke="var(--ink)" stroke-width="2.5"/><rect x="15" y="188" width="270" height="10" rx="5" fill="var(--ink)"/><g id="iL"></g></g>
+  <g id="pr" class="mv"><path d="M450 56 L325 188 M450 56 L575 188" stroke="var(--ink)" stroke-width="2.5"/><rect x="315" y="188" width="270" height="10" rx="5" fill="var(--ink)"/><g id="iR"></g></g>
+ </g><g id="gh" pointer-events="none"></g></svg>
+ <p class="tip">${tip}</p>
+ <div class="row ctl"><span>Or type an amount:</span><input id="amt" type="number" min="1" value="${st.amt}" aria-label="Amount to take away"><button class="btn alt" data-do="remL">take from left</button><button class="btn alt" data-do="remR">take from right</button><button class="btn alt" id="bL" data-do="remBL" style="display:none">box off left</button><button class="btn alt" id="bR" data-do="remBR" style="display:none">box off right</button><button class="btn alt" id="undo" data-do="undo" style="display:none">Put it back</button></div>`;
+ const mount=()=>{
+  update();
+  const sc=$('#sc');
+  const toSvg=e=>{const p=sc.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(sc.getScreenCTM().inverse())};
+  sc.addEventListener('pointerdown',e=>{
+   if(S.done)return;
+   const g=e.target.closest('.unit,.mbox');if(!g)return;
+   const isBox=g.classList.contains('mbox');
+   if(isBox&&st.b==0)return say('That’s a mystery box. We can’t take it off because we don’t know what’s inside!','info');
+   e.preventDefault();
+   const side=g.dataset.side,cx=side=='L'?150:450,gh=$('#gh'),sz=isBox?44:22;
+   gh.insertAdjacentHTML('beforeend',`<rect class="gr" x="${-sz/2}" y="${-sz/2}" width="${sz}" height="${sz}" rx="${isBox?10:5}" fill="${g.firstElementChild.getAttribute('fill')}" stroke="var(--ink)" stroke-width="2"/>`);
+   const gr=gh.lastElementChild;g.style.opacity='.25';
+   let off=false,last={x:0,y:0};
+   const wt=isBox?x:1;
+   const move=ev=>{
+    last=toSvg(ev);gr.style.transform=`translate(${last.x}px,${last.y}px) scale(1.2)`;
+    const o=Math.abs(last.x-cx)>155||last.y<70||last.y>235;
+    if(o!==off){off=o;tilt(diff()+(o?(side=='L'?-wt:wt):0))}
+   };
+   const up=()=>{
+    window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);
+    if(off&&!S.done){
+     if(isBox){if(side=='L'){st.a--;st.remBL++}else{st.b--;st.remBR++}}
+     else if(side=='L'){st.c--;st.remL++}else{st.d--;st.remR++}
+     gr.style.transition='transform .6s cubic-bezier(.5,0,1,.6),opacity .6s';
+     gr.style.transform=`translate(${last.x}px,${last.y+110}px) scale(1.2)`;gr.style.opacity='0';
+     setTimeout(()=>gr.remove(),650);
+     update();say(tipMsg(),diff()?'no':'ok');
+    }else{g.style.opacity='';gr.remove();tilt(diff())}
+   };
+   window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+   move(e);
+  });
+ };
+ return[{vis,mount,update,prompt:'What number is hiding in each box? x = ?',mode:'num',answer:x,
+  hint:()=>{
+   if(diff()!==0)return 'The scale is tipped! Take the same amount off the other side first.';
+   st.remL=st.remR=st.remBL=st.remBR=0;
+   if(st.b>0){const m=Math.min(st.a,st.b);st.a-=m;st.b-=m;return `Take ${m} mystery box${m>1?'es':''} off both sides. The scale stays balanced.`}
+   if(st.c>0&&st.d>0){const c=Math.min(st.c,st.d);st.d-=c;st.c-=c;return `Take ${c} block${c>1?'s':''} off both sides. The scale stays balanced.`}
+   if(st.a>1){const a=st.a;st.d/=a;st.a=1;return `Share both sides into ${a} equal groups. One box matches ${st.d}.`}
+   return `One box balances ${st.d}. Type it in!`},
+  explain:`Doing the same thing to both sides keeps it balanced. x = ${x}.`,final:true,live:true,
+  act:d=>{
+   const el=$('#amt'),n=Math.max(1,parseInt(el&&el.value)||1);st.amt=n;
+   if(d=='undo'){st.c+=st.remL;st.d+=st.remR;st.a+=st.remBL;st.b+=st.remBR;st.remL=st.remR=st.remBL=st.remBR=0;return 'Everything is back. The scale is balanced again.'}
+   if(d=='remBL'){if(st.a<1||st.b<1)return 'No boxes to take off.';st.a--;st.remBL++}
+   if(d=='remBR'){if(st.b<1)return 'No boxes to take off the right side.';st.b--;st.remBR++}
+   if(d=='remL'){if(st.c==0)return st.b>0?'No blocks are left on the left. Try a mystery box instead!':'Only mystery boxes are left on the left. We can’t take those off because we don’t know what’s inside.';if(n>st.c)return 'There are only '+st.c+' to take off the left side.';st.c-=n;st.remL+=n}
+   if(d=='remR'){if(n>st.d)return 'There are only '+st.d+' to take off the right side.';st.d-=n;st.remR+=n}
+   return tipMsg()}}];
+}
+
+function patSvg(P,five,anim){
+ if(P.type!='lin'&&P.type!='down')return stackSvg(P,five,anim);
+ const down=P.dir=='down',hasB=P.b>0,grp=n=>down?P.K-n:n;
+ const cols=n=>(hasB?1:0)+grp(n)+(down&&n>1?1:0);
+ const N=five?5:4;let tc=five?0:5;for(let n=1;n<=N;n++)tc+=cols(n);
+ const gap=16,s=Math.min(20,(576-gap*N)/tc),u=s-2;
+ const mx=Math.max(P.a,P.b),base=26+mx*s,H=base+50,del=n=>(n-1)*.8;
+ const blocks=(x,cnt,fill)=>{let o='';for(let i=0;i<cnt;i++)o+=`<rect x="${x}" y="${base-(i+1)*s+1}" width="${u}" height="${u}" rx="3" fill="${fill}" stroke="rgba(27,42,74,.4)"/>`;return o};
+ const caps=(xc,n,v)=>`<text x="${xc}" y="${base+19}" text-anchor="middle" font-size="14" fill="var(--mut)">Term ${n}</text><text x="${xc}" y="${base+42}" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">${v}</text>`;
+ let x=12,out='';
+ for(let n=1;n<=N;n++){
+  const x0=x,d=del(n);let cx=x,t='',lab=null;
+  if(hasB){t+=blocks(cx,P.b,'#ff8fab');cx+=s}
+  const g=grp(n);
+  for(let k=0;k<g;k++){
+   const isNew=!down&&n>1&&k==g-1,gt=blocks(cx,P.a,'#ffc93c');
+   if(isNew){lab=cx+u/2;t+=`<g class="new" style="animation-delay:${d+.4}s">${gt}</g>`}else t+=gt;
+   cx+=s;
+  }
+  if(down&&n>1){
+   let o='';for(let i=0;i<P.a;i++)o+=`<rect x="${cx}" y="${base-(i+1)*s+1}" width="${u}" height="${u}" rx="3" fill="none" stroke="var(--mut)" stroke-dasharray="3 2"/>`;
+   t+=`<g class="fadeout" style="animation-delay:${d+.4}s">${blocks(cx,P.a,'#ffc93c')}</g>${o}`;
+   lab=cx+u/2;cx+=s;
+  }
+  
+  const w=cx-x0-2;
+  out+=`<g class="trm" style="animation-delay:${d}s">${t}${caps(x0+w/2,n,P.f(n))}</g>`;
+  x=cx-2+gap;
+ }
+ if(!five){
+  const w=5*s-2,h=mx*s;
+  out+=`<g class="trm" style="animation-delay:${del(5)}s"><rect x="${x}" y="${base-h}" width="${w}" height="${h}" rx="10" fill="none" stroke="var(--mut)" stroke-width="2" stroke-dasharray="6 4"/><text x="${x+w/2}" y="${base-h/2+14}" text-anchor="middle" font-size="40" font-weight="700" fill="var(--mut)">?</text>${caps(x+w/2,5,'?')}</g>`;
+ }
+ return `<svg viewBox="0 0 600 ${H}" class="${anim?'anim':''}" role="img" aria-label="Block pattern showing terms 1 to ${five?5:4}">${out}</svg>`;
+}
+
+function stackSvg(P,five,anim){
+ const N=five?5:4,v=n=>P.f(n);
+ let maxV=0;for(let n=1;n<=N;n++)maxV=Math.max(maxV,v(n));
+ const ch=Math.max(3,Math.min(10,Math.ceil(Math.sqrt(maxV)))),rows=Math.min(ch,maxV),cols=n=>Math.ceil(v(n)/ch);
+ let tc=five?0:5;for(let n=1;n<=N;n++)tc+=cols(n);
+ const gap=16,items=N+(five?0:1),s=Math.min(20,(576-gap*(items-1))/tc),u=s-2,base=14+rows*s,H=base+50,del=n=>(n-1)*.8;
+ const caps=(xc,n,val)=>`<text x="${xc}" y="${base+19}" text-anchor="middle" font-size="14" fill="var(--mut)">Term ${n}</text><text x="${xc}" y="${base+42}" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">${val}</text>`;
+ let x=12,out='';
+ for(let n=1;n<=N;n++){
+  const c=cols(n),x0=x;let a1='',a2='';
+  for(let i=0;i<v(n);i++){
+   let col='#ffc93c',nw=false;
+   if(P.type=='fib'){if(n>=3&&i<v(n-2))col='#ff8fab'}
+   else if(n>=2&&i>=v(n-1)){col='#7be0d0';nw=true}
+   const r=`<rect x="${x0+Math.floor(i/ch)*s}" y="${base-(i%ch+1)*s+1}" width="${u}" height="${u}" rx="3" fill="${col}" stroke="rgba(27,42,74,.4)"/>`;
+   if(nw)a2+=r;else a1+=r;
+  }
+  const w=c*s-2;
+  out+=`<g class="trm" style="animation-delay:${del(n)}s">${a1}${a2?`<g class="new" style="animation-delay:${del(n)+.4}s">${a2}</g>`:''}${caps(x0+w/2,n,v(n))}</g>`;
+  x=x0+c*s-2+gap;
+ }
+ if(!five){
+  const w=5*s-2,h=rows*s;
+  out+=`<g class="trm" style="animation-delay:${del(5)}s"><rect x="${x}" y="${base-h}" width="${w}" height="${h}" rx="10" fill="none" stroke="var(--mut)" stroke-width="2" stroke-dasharray="6 4"/><text x="${x+w/2}" y="${base-h/2+14}" text-anchor="middle" font-size="40" font-weight="700" fill="var(--mut)">?</text>${caps(x+w/2,5,'?')}</g>`;
+ }
+ return `<svg viewBox="0 0 600 ${H}" class="${anim?'anim':''}" role="img" aria-label="Block pattern showing terms 1 to ${N}">${out}</svg>`;
+}
+
+function genPattern(){
+ const L=lvl();
+ const pool=(L==1?['lin','lin','tri']:['lin','down','tri','geo','fib']).filter(t=>t!==S.lastPat);
+ const type=pool[R(0,pool.length-1)];S.lastPat=type;
+ let P;
+ if(type=='lin'){
+  let a,b;
+  if(L==1){a=R(2,5);b=R(0,3)}else if(L==2){a=R(3,9);b=R(1,6)}else{a=R(5,12);b=R(2,9)}
+  P={type,dir:'up',a,b,T:L==1?8:L==2?10:20,f:n=>a*n+b};
+ }else if(type=='down'){
+  const a=L==2?R(2,4):R(3,6),r=R(1,5),T=L==2?8:10,K=T+(L==2?R(1,2):1);
+  P={type,dir:'down',a,b:r,K,T,C:a*K+r,f:n=>a*(K-n)+r};
+ }else if(type=='tri'){
+  const s=R(1,L==1?4:5),f1=R(1,L==1?2:3),g=L==1?1:R(1,2),v=[s];
+  for(let n=2;n<=10;n++)v.push(v[n-2]+f1+g*(n-2));
+  P={type,g,T:L==1?7:8,f:n=>v[n-1]};
+ }else if(type=='geo'){
+  const r=L==2?2:R(2,3),s=r==3?1:R(1,3);
+  P={type,r,T:r==2?7:6,f:n=>s*Math.pow(r,n-1)};
+ }else{
+  const st=L==2?[[1,1],[1,2],[2,1]]:[[2,3],[1,3],[3,2],[2,5]],[p,q]=st[R(0,st.length-1)],v=[p,q];
+  for(let n=3;n<=10;n++)v.push(v[n-2]+v[n-3]);
+  P={type,T:L==2?7:8,f:n=>v[n-1]};
+ }
+ const T=P.T,f=P.f,a=P.a,down=type=='down';
+ const seq=n=>Array.from({length:n},(_,i)=>f(i+1)).join(', ');
+ const jumps=Array.from({length:4},(_,i)=>'+'+(f(i+2)-f(i+1))).join(', ');
+ const KIND={lin:'Adds the same amount each time',down:'Subtracts the same amount each time',tri:'Adds a bigger amount each time',geo:'Multiplies by the same number each time',fib:'Adds the two terms before it'};
+ const kopts=shuf([KIND[type],...shuf(Object.keys(KIND).filter(k=>k!==type)).slice(0,2).map(k=>KIND[k])]);
+ const rule=down?`${P.C} − ${a} × n`:`n × ${a}${P.b?' + '+P.b:''}`;
+ const tip=type=='lin'||type=='down'?(P.b>0?'Pink blocks stay the same. Yellow blocks are the ones that change from term to term.':'Look at how the yellow blocks change from one term to the next.')
+  :type=='fib'?'Look at the colors. Each term is built from blocks of earlier terms.':'Yellow blocks come from the term before. Green blocks are new.';
+ let five=false;
+ const draw=an=>{$('#pv').innerHTML=patSvg(P,five,an)};
+ const shell=()=>`<div id="pv"></div><div class="row"><button class="btn alt" data-do="pplay">Watch it change</button></div><p class="tip">${tip}</p>`;
+ const hint1={
+  lin:`Look at how the blocks change from one term to the next. How many blocks get added each time?`,
+  down:`Look at how the blocks change from one term to the next. How many blocks disappear each time?`,
+  tri:`Count the green blocks added each time. Is it the same amount, or does it change?`,
+  geo:`How many times bigger does each term get? Compare Term 2 to Term 1.`,
+  fib:`Look at the colors. Term 4 is made of two earlier terms. Which two?`}[type];
+ const exp1={
+  lin:`It grows by ${a} each time, so Term 5 is ${f(4)} + ${a} = ${f(5)}.`,
+  down:`It shrinks by ${a} each time, so Term 5 is ${f(4)} − ${a} = ${f(5)}.`,
+  tri:`The amount added keeps growing (${jumps.split(', ').slice(0,3).join(', ')}, ...). Term 5 is ${f(4)} + ${f(5)-f(4)} = ${f(5)}.`,
+  geo:`Each term is ${P.r} times the one before. ${f(4)} × ${P.r} = ${f(5)}.`,
+  fib:`Add the two terms before it: ${f(3)} + ${f(4)} = ${f(5)}.`}[type];
+ const hint3={
+  lin:`The rule is “term number × ${a}${P.b?' + '+P.b:''}.” Put ${T} in for the term number.`,
+  down:`The rule is ${P.C} − ${a} × (term number). Put ${T} in for the term number.`,
+  tri:`Look at how much is added each time: ${jumps}. What comes next? Keep going.`,
+  geo:`Keep multiplying by ${P.r}. Start from Term 5, which is ${f(5)}.`,
+  fib:`Keep adding the last two terms. Start with ${f(4)} + ${f(5)}.`}[type];
+ const exp3=type=='lin'||type=='down'
+  ?`Rule: ${rule}. For n = ${T}: ${down?`${P.C} − ${a} × ${T}`:`${T} × ${a}${P.b?' + '+P.b:''}`} = ${f(T)}.`
+  :`The terms are ${seq(T)}. Term ${T} is ${f(T)}.`;
+ const prompt3=type=='lin'||type=='down'?`What is Term ${T}? Counting one by one takes forever. Find a shortcut!`:`What is Term ${T}? Keep the pattern going!`;
+ return[
+  {vis:shell,mount:()=>draw(true),replay:()=>draw(true),onDone:()=>{five=true;draw(true)},
+   prompt:'What is Term 5?',mode:'num',answer:f(5),hint:()=>hint1,explain:exp1},
+  {vis:shell,mount:()=>{five=true;draw(true)},replay:()=>draw(true),
+   prompt:'What kind of pattern is this?',mode:'choice',opts:kopts,answer:KIND[type],
+   hint:()=>'Compare the jump from Term 1 to Term 2 with the jump from Term 2 to Term 3. Are they the same?',
+   explain:`Yes! This pattern ${KIND[type].charAt(0).toLowerCase()+KIND[type].slice(1)}.`},
+  {vis:shell,mount:()=>{five=true;draw(true)},replay:()=>draw(true),
+   prompt:prompt3,mode:'num',answer:f(T),hint:()=>hint3,explain:exp3,final:true}];
+}
+
+function genMultiply(){
+ const L=lvl(),lo=L==1?11:L==2?12:21,hi=L==1?19:L==2?49:99;
+ const pick=()=>{let A,B;do{A=R(lo,hi);B=R(lo,hi)}while(A%10==0||B%10==0);return[A,B]};
+ const P={};
+ const setNums=(A,B)=>{P.A=A;P.B=B;P.At=A-A%10;P.Ao=A%10;P.Bt=B-B%10;P.Bo=B%10;P.p=[P.At*P.Bt,P.Ao*P.Bt,P.At*P.Bo,P.Ao*P.Bo];P.T=A*B};
+ setNums(...pick());
+ let stage=0,ptok=0;
+ const CAP=[
+  ()=>`We want to find ${P.A} × ${P.B}. That’s a big one! Let’s break it into easier pieces.`,
+  ()=>`Break ${P.A} into tens and ones: ${P.A} = ${P.At} + ${P.Ao}.`,
+  ()=>`Break ${P.B} the same way: ${P.B} = ${P.Bt} + ${P.Bo}.`,
+  ()=>`Multiply the tens by the tens: ${P.At} × ${P.Bt} = ${P.p[0]}.`,
+  ()=>`Next piece: ${P.Ao} × ${P.Bt} = ${P.p[1]}.`,
+  ()=>`Next piece: ${P.At} × ${P.Bo} = ${P.p[2]}.`,
+  ()=>`Last piece, the ones by the ones: ${P.Ao} × ${P.Bo} = ${P.p[3]}.`,
+  ()=>`Add all four pieces: ${P.p.join(' + ')} = ${P.T}. So ${P.A} × ${P.B} = ${P.T}!`];
+ const eqsFor=k=>{
+  let h=k<2?`${P.A} × ${P.B}`:`(${P.At} + ${P.Ao}) × (${P.Bt} + ${P.Bo})`;
+  if(k>=3)h+=`<br>= ${P.p.map((v,i)=>k>=3+i?v:'?').join(' + ')}`+(k>=7?` = ${P.T}`:'');
+  return h};
+ const build=()=>{
+  const {A,B,At,Ao,Bt,Bo,p}=P,W=460,H=230,x0=110,y0=58;
+  const wT=Math.max(110,Math.min(W-84,Math.round(W*At/A))),wO=W-wT,hT=Math.max(70,Math.min(H-58,Math.round(H*Bt/B))),hO=H-hT;
+  const tx=(s,e,x,y,anc,txt,fs)=>`<text class="rv" data-s="${s}"${e!==null?` data-e="${e}"`:''} x="${x}" y="${y}" text-anchor="${anc}" font-size="${fs}" font-weight="700" fill="var(--ink)">${txt}</text>`;
+  const cells=[[x0,y0,wT,hT,'#ffc93c',At,Bt,p[0],3],[x0+wT,y0,wO,hT,'#7be0d0',Ao,Bt,p[1],4],[x0,y0+hT,wT,hO,'#ff8fab',At,Bo,p[2],5],[x0+wT,y0+hT,wO,hO,'#b9a7ff',Ao,Bo,p[3],6]];
+  let o=`<rect x="${x0}" y="${y0}" width="${W}" height="${H}" rx="6" fill="none" stroke="var(--ink)" stroke-width="3"/>`;
+  o+=tx(0,0,x0+W/2,y0-20,'middle',A,28)+tx(0,0,x0-16,y0+H/2+10,'end',B,28);
+  o+=tx(1,null,x0+wT/2,y0-20,'middle',At,26)+tx(1,null,x0+wT+wO/2,y0-20,'middle',Ao,26);
+  o+=tx(2,null,x0-16,y0+hT/2+10,'end',Bt,26)+tx(2,null,x0-16,y0+hT+hO/2+10,'end',Bo,26);
+  o+=`<line class="rv" data-s="1" x1="${x0+wT}" y1="${y0-6}" x2="${x0+wT}" y2="${y0+H}" stroke="var(--ink)" stroke-width="2.5" stroke-dasharray="7 5"/>`;
+  o+=`<line class="rv" data-s="2" x1="${x0-6}" y1="${y0+hT}" x2="${x0+W}" y2="${y0+hT}" stroke="var(--ink)" stroke-width="2.5" stroke-dasharray="7 5"/>`;
+  for(const [x,y,w,h,fill,a,b,v,s] of cells){
+   const cx=x+w/2,cy=y+h/2;
+   o+=`<g class="rv rc" data-s="${s}"><rect x="${x+1.5}" y="${y+1.5}" width="${w-3}" height="${h-3}" rx="4" fill="${fill}" stroke="rgba(27,42,74,.5)" stroke-width="2"/><text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="${h<70?12:15}" fill="#1b2a4a">${a} × ${b}</text><text x="${cx}" y="${cy+(h<70?16:22)}" text-anchor="middle" font-size="${h<70?20:26}" font-weight="700" fill="#1b2a4a">${v}</text></g>`;
+  }
+  return `<svg viewBox="0 0 600 ${y0+H+14}" role="img" aria-label="Area model for ${A} times ${B}">${o}</svg>`;
+ };
+ const apply=k=>{
+  stage=k;
+  document.querySelectorAll('#mlt [data-s]').forEach(el=>{
+   const s=+el.dataset.s,e=el.dataset.e===undefined?99:+el.dataset.e;
+   el.classList.toggle('on',k>=s&&k<=e);el.classList.toggle('cur',k==s&&s>=3&&s<=6);
+  });
+  const c=$('#cap'),q=$('#eqs');if(c)c.textContent=CAP[k]();if(q)q.innerHTML=eqsFor(k);
+ };
+ const play=async()=>{
+  const my=++ptok;let k=stage>=7?0:stage;apply(k);
+  while(k<7){await sleep(k==0?1200:1800);if(my!==ptok||!$('#cap'))return;k++;apply(k)}
+ };
+ const useNums=(A,B)=>{ptok++;setNums(A,B);$('#mlt').innerHTML=build();apply(0);play()};
+ const mx=a=>{
+  if(a=='step'){ptok++;apply(Math.min(7,stage+1))}
+  else if(a=='play')play();
+  else if(a=='reset'){ptok++;apply(0)}
+  else if(a=='rand')useNums(...pick());
+  else if(a=='own'){
+   const A=parseInt($('#ma').value),B=parseInt($('#mb').value);
+   if(!(A>=11&&A<=99&&B>=11&&B<=99)||A%10==0||B%10==0)return say('Use two-digit numbers that don’t end in 0, like 23 or 47.','info');
+   say('','info');useNums(A,B);
+  }
+ };
+ const stageHtml=`<div id="mlt" class="mlt"></div><p id="cap" class="cap" aria-live="polite"></p><div id="eqs" class="eqn" style="font-size:22px;line-height:1.6"></div>`;
+ return[{
+  vis:()=>stageHtml+`<div class="row"><button class="btn" data-do="mx-step">Next step ▶</button><button class="btn alt" data-do="mx-play">Play it all</button><button class="btn alt" data-do="mx-reset">Restart</button></div>
+  <div class="row ctl"><span>Try your own:</span><input id="ma" type="number" min="11" max="99" aria-label="First number"> <span>×</span> <input id="mb" type="number" min="11" max="99" aria-label="Second number"><button class="btn alt" data-do="mx-own">Show me</button><button class="btn alt" data-do="mx-rand">Surprise me</button></div>`,
+  mount:()=>{$('#mlt').innerHTML=build();apply(0);play()},mx,
+  prompt:'Watch how a big multiplication breaks into easy pieces.',mode:'watch',nextLabel:'Now you try!'},
+ {vis:()=>stageHtml,
+  mount:()=>{$('#mlt').innerHTML=build();apply(6);$('#cap').textContent='All four pieces are filled in. Now add them up!'},
+  get prompt(){return `What is ${P.A} × ${P.B}? Add the four pieces.`},mode:'num',
+  get answer(){return P.T},
+  hint:()=>`Add the pieces one at a time: ${P.p[0]} + ${P.p[1]} = ${P.p[0]+P.p[1]}, then keep going.`,
+  get explain(){return `${P.p.join(' + ')} = ${P.T}, so ${P.A} × ${P.B} = ${P.T}.`},
+  onDone:()=>apply(7),final:true}];
+}
+
+function newQ(){
+ S.steps={machine:genMachine,balance:genBalance,pattern:genPattern,multiply:genMultiply}[S.act]();
+ S.i=0;show();
+}
+function show(){
+ const q=S.steps[S.i];S.tries=0;S.done=false;S.first=true;
+ $('#stars').textContent='★ '+S.stars;
+ document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.a===S.act));
+ const L=lvl();
+ const input=q.mode=='watch'?'':q.mode=='num'
+  ?`<div class="row"><input id="ans" type="number" inputmode="numeric" aria-label="Your answer" autocomplete="off"><button class="btn" data-do="check">Check</button></div>`
+  :`<div class="row">${q.opts.map(o=>`<button class="opt" data-do="pick" data-v="${o}">${o}</button>`).join('')}</div>`;
+ $('#stage').innerHTML=`<p class="intro">${INTRO[S.act]}</p><div class="lv">Level ${L} of ${LMAX[S.act]}${LNA[S.act]?': '+LNA[S.act][L-1]:''}</div>${LNA[S.act]?`<div class="lvp" role="group" aria-label="Choose a level">${(LNA[S.act]||[]).map((n,i)=>`<button class="lvb" data-do="lvl" data-l="${i+1}" aria-pressed="${i+1==L}" title="${n}">${i+1}</button>`).join('')}</div>`:''}<div id="vis">${q.vis()}</div><div class="prompt">${q.prompt}</div>${input}
+ ${q.hint?'<div class="row"><button class="btn alt" data-do="hint">Give me a hint</button></div>':''}<div id="fb" class="info" role="status"></div><div class="row" id="nx"></div>`;
+ if(q.mode=='watch')$('#nx').innerHTML='<button class="btn" data-do="next">'+(q.nextLabel||'Next')+'</button>';
+ if(q.mount)q.mount();
+ const a=$('#ans');if(a)a.focus({preventScroll:true});
+}
+function say(t,c){const f=$('#fb');f.className=c+' pop';f.textContent=t}
+function finish(ok,q){
+ S.done=true;if(q.onDone)q.onDone(ok);
+ const last=!!q.final;
+ if(ok&&last){const before=lvl();S.prog[S.act]++;if(lvl()>before)$('#fb').textContent+=' Level up! The puzzles get trickier now.'}
+ save();$('#stars').textContent='★ '+S.stars;
+ const a=$('#ans');if(a)a.disabled=true;
+ document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+ $('#nx').innerHTML=`<button class="btn" data-do="next">${last?'New puzzle':'Next question'}</button>`;
+ $('#nx button').focus();
+}
+function check(v){
+ if(S.done)return;
+ const q=S.steps[S.i];
+ const ok=q.mode=='num'?(v!==''&&Number(v)===q.answer):v===q.answer;
+ if(q.mode=='num'&&v==='')return say('Type a number first.','info');
+ if(ok){
+  if(S.first){S.stars++}
+  say((S.first?'Yes! ':'You got it! ')+q.explain,'ok');finish(true,q);
+ }else{
+  S.tries++;S.first=false;
+  if(S.tries>=3){say('The answer is '+q.answer+'. '+q.explain,'no');finish(false,q)}
+  else say(S.tries==1?'Not yet. Look again and try once more.':'Still not it. Tap the hint for a nudge.','no');
+ }
+}
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-a],[data-do]');if(!t)return;
+ if(t.dataset.a){S.act=t.dataset.a;return newQ()}
+ const d=t.dataset.do,q=S.steps[S.i];
+ if(d=='lvl'){S.prog[S.act]=(+t.dataset.l-1)*3;save();return newQ()}
+ if(d=='check')check($('#ans').value.trim());
+ if(d=='pick')check(t.dataset.v);
+ if(d=='hint'&&!S.done){const m=q.hint();if(q.live)q.update();say(m,'info')}
+ if(q.act&&(d=='remL'||d=='remR'||d=='undo'||d=='remBL'||d=='remBR')&&!S.done){const m=q.act(d);q.update();say(m,m.startsWith('Uh')?'no':'info')}
+ if(q.mx&&d&&d.startsWith('mx-'))q.mx(d.slice(3));
+ if(d=='pplay'&&q.replay)q.replay();
+ if(d=='play'&&q.playN)q.playN(+t.dataset.n);
+ if(d=='run'&&q.runOwn)q.runOwn();
+ if(d=='next'){if(q.final)newQ();else{S.i++;show()}}
+});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='ans')check(e.target.value.trim());if(e.key=='Enter'&&e.target.id=='own'){const bt=document.querySelector('[data-do=run]');if(bt)bt.click()}if(e.key=='Enter'&&(e.target.id=='ma'||e.target.id=='mb')){const bt=document.querySelector('[data-do=mx-own]');if(bt)bt.click()}});
+newQ();
+</script>
+</body>
+</html>
